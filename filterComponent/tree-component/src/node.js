@@ -1,20 +1,18 @@
 import React from "react";
 import { Checkbox } from "antd";
 
-const node = ({ checked, title, key }) => {
-  const onChangeHandler = (event) => {};
-
+const Node = (props) => {
   return (
     <Checkbox
-      onChange={(e) => onChange(e, item.key)}
-      checked={item.checked}
-      key={item.key}
-      tabindex={item.key}
+      onChange={props.onChange}
+      checked={props.checked}
+      key={props.key}
+      tabindex={props.key}
       {...props}
     >
-      {item.title}
+      {props.title}
     </Checkbox>
   );
 };
 
-export default node;
+export default Node;
