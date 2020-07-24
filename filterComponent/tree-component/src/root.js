@@ -22,32 +22,16 @@ const Root = () => {
   ]);
   const [checked, setChecked] = useState([]);
 
-  const onChangeHandler = (event, datata, index, child) => {
-    const arrayClone = [...datata];
+  const onChangeHandler = (event, index) => {
     const checkedClone = [...checked];
     console.log(index);
     let shouldUpdate = null;
-    console.log(event.target.checked);
-    //let newIndex = index
-    // if (child) {
-    //   newIndex = index[index.length - 1]; //This should be correct ;
-    //   console.log(newIndex);
-    // }
     shouldUpdate = checked.findIndex((item) => item === index);
-    console.log(shouldUpdate);
     if (event.target.checked && shouldUpdate >= 0) {
       checkedClone.splice(shouldUpdate, 1);
-      console.log(index);
     } else {
       checkedClone.push(index);
-      console.log(index, checkedClone);
     }
-    // let elementToUpdate = arrayClone[index];
-    // console.log(elementToUpdate);
-    // elementToUpdate = { ...elementToUpdate, checked: event.target.checked };
-    // console.log(elementToUpdate);
-    // arrayClone.splice(index, 1, elementToUpdate);
-    //console.log(arrayClone);
     setChecked(checkedClone);
   };
 
@@ -59,12 +43,9 @@ const Root = () => {
           family = dataItem.children.map((item) => {
             const keyArray = item.key;
             const arrayLength = keyArray.length;
-            console.log(checked.findIndex((check) => check === item.key) < 0);
             return (
               <Node
-                onChange={(event) =>
-                  onChangeHandler(event, dataItem.children, keyArray)
-                }
+                onChange={(event) => onChangeHandler(event, keyArray)}
                 checked={checked.findIndex((check) => check === item.key) < 0}
                 title={item.title}
                 nodeKey={keyArray[arrayLength]}
@@ -79,7 +60,7 @@ const Root = () => {
             className="flex flex-col justify-start items-start bg-gray-200"
           >
             <Node
-              onChange={(event) => onChangeHandler(event, data, dataItem.key)}
+              onChange={(event) => onChangeHandler(event, dataItem.key)}
               nodeKey={dataItem.key}
               title={dataItem.title}
               checked={checked.findIndex((check) => check === dataItem.key) < 0}
