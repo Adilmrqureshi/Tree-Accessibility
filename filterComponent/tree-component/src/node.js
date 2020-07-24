@@ -4,13 +4,13 @@ import { Checkbox } from "antd";
 const Node = (props) => {
   return (
     <Checkbox
+      className="px-4 "
       onChange={props.onChange}
       checked={props.checked}
-      key={props.key}
-      tabindex={props.key}
+      tabindex={props.nodeKey}
       {...props}
     >
-      {props.title}
+      {" " + props.title}
     </Checkbox>
   );
 };
