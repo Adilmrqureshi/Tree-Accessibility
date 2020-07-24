@@ -1,48 +1,68 @@
 import React, { useState } from "react";
 import Node from "./node";
-const Root = () => {
-  //useState filled with practice Data, includes Children
-  const [data] = useState([
-    {
-      title: "George",
-      key: "0",
-      children: [
-        { title: "Bongiyangwa", key: "0-0" },
-        { title: "Alom Geer", key: "0-1" },
-        { title: "Qureshi", key: "0-2" },
-      ],
-    },
-    {
-      title: "Mamunur",
-      key: "1",
-      children: [
-        { title: "Bongiyangwa", key: "1-0" },
-        { title: "Alom Geer", key: "1-1" },
-        { title: "Qureshi", key: "1-2" },
-      ],
-    },
-    { title: "Michael", key: "2" },
-    { title: "Bradley Cooper", key: "3" },
-    { title: "Priya", key: "4" },
-    { title: "Annie", key: "5" },
-    { title: "Random", key: "6" },
-    { title: "Geezer", key: "7" },
-  ]);
+const Root = (props) => {
   const [checked, setChecked] = useState([]);
+  const { data } = props;
+
+  /*onChildHandler function takes data, value and check
+   *It will return a null value if the given node as no children
+   *However, if the node has children nodes, it loops through those children
+   *and recursively calls the function for each one, repeating the process.
+   */
+  /** Function has a second feature which allows for
+   * unticking of parent component also unticking children components
+   */
+
+  const onChildHandler = (data, value, check) => {
+    if (!data.children) return;
+    else {
+      const arrayToReturn = [];
+      const children = data.children;
+      if (value) {
+        for (let child in children) {
+          const helper = children[child];
+          if (helper.children) {
+            arrayToReturn.push(onChildHandler(helper.children, value, check));
+          } else {
+            if (!check.find((item) => item === helper.key)) {
+              arrayToReturn.push(helper.key);
+            }
+          }
+        }
+      } else {
+        const arrayToReturn = check;
+        data.children.forEach((element) => {
+          const keyToRemove = element.key;
+          const indexOfKey = arrayToReturn.find((key) => key === keyToRemove);
+          arrayToReturn.splice(indexOfKey, 1);
+        });
+      }
+      return arrayToReturn;
+    }
+  };
 
   //OnChangeHandler is adding and removing items from the 'checked' Array
-  const onChangeHandler = (event, index) => {
+  const onChangeHandler = (event, index, revelantData) => {
     const checkedClone = [...checked];
-    let shouldUpdate = null;
-    shouldUpdate = checked.findIndex((item) => item === index);
-    console.log(shouldUpdate);
-    console.log(event.target.checked);
+    const indexLastDigit = index.split("")[index.length - 1];
+    let shouldUpdate = checkedClone.findIndex((item) => item === index);
     if (event.target.checked) {
+      const arrayFromChildren = onChildHandler(
+        revelantData[indexLastDigit],
+        event.target.checked,
+        checkedClone
+      );
       checkedClone.push(index);
-      console.log(checkedClone);
+      for (let key in arrayFromChildren) {
+        checkedClone.push(arrayFromChildren[key]);
+      }
     } else {
       checkedClone.splice(shouldUpdate, 1);
-      console.log(checkedClone);
+      onChildHandler(
+        revelantData[indexLastDigit],
+        event.target.checked,
+        checkedClone
+      );
     }
     setChecked(checkedClone);
   };
@@ -56,15 +76,16 @@ const Root = () => {
         let family = null;
         if (dataItem.children) {
           family = dataItem.children.map((item) => {
-            const keyArray = item.key;
-            const arrayLength = keyArray.length;
+            const arrayLength = item.key.length;
             return (
               //Node component used to render children
               <Node
-                onChange={(event) => onChangeHandler(event, keyArray)}
+                onChange={(event) =>
+                  onChangeHandler(event, item.key, dataItem.children)
+                }
                 checked={checked.find((check) => check === item.key)}
                 title={item.title}
-                nodeKey={keyArray[arrayLength]}
+                nodeKey={item.key[arrayLength]}
                 key={item.key}
               />
             );
@@ -72,13 +93,13 @@ const Root = () => {
         }
         return (
           //Here, parent components are rendered using Node component
-          // TailwindCSS used to implement flex and rrange nodes vertically
+          // TailwindCSS used to implement flex and arrange nodes vertically
           <div
             key={dataItem.key}
             className="flex flex-col justify-start items-start bg-gray-200"
           >
             <Node
-              onChange={(event) => onChangeHandler(event, dataItem.key)}
+              onChange={(event) => onChangeHandler(event, dataItem.key, data)}
               nodeKey={dataItem.key}
               title={dataItem.title}
               checked={checked.find((check) => check === dataItem.key)}
