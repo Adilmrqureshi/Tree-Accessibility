@@ -5,6 +5,8 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import "./tailwind.output.css";
 
+//index of page, tailwindCss imported for use
+
 ReactDOM.render(
   <React.StrictMode>
     <App />

@@ -1,7 +1,8 @@
 import React from "react";
 import "./App.css";
 import Root from "./root";
-import Branch from "./branch";
+
+//App.js implements
 
 function App() {
   return (
