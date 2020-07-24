@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Branch from "./branch";
 import Node from "./node";
 
 const Root = () => {
@@ -25,41 +24,48 @@ const Root = () => {
 
   const onChangeHandler = (event, datata, index, child) => {
     const arrayClone = [...datata];
-    let newIndex = index;
+    const checkedClone = [...checked];
+    console.log(index);
+    let shouldUpdate = null;
+    console.log(event.target.checked);
+    //let newIndex = index
     // if (child) {
     //   newIndex = index[index.length - 1]; //This should be correct ;
     //   console.log(newIndex);
     // }
-    let shouldUpdate = arrayClone.find((item) => checked.key === newIndex);
+    shouldUpdate = checked.findIndex((item) => item === index);
     console.log(shouldUpdate);
-    let elementToUpdate = arrayClone[newIndex];
-    console.log(elementToUpdate);
-    elementToUpdate = { ...elementToUpdate, checked: event.target.checked };
-    console.log(elementToUpdate);
-    arrayClone.splice(newIndex, 1, elementToUpdate);
-    console.log(arrayClone);
-    if (child) {
-      // const finalData = [...data];
-
-      setData(arrayClone);
+    if (event.target.checked && shouldUpdate >= 0) {
+      checkedClone.splice(shouldUpdate, 1);
+      console.log(index);
     } else {
-      setData(arrayClone);
+      checkedClone.push(index);
+      console.log(index, checkedClone);
     }
+    // let elementToUpdate = arrayClone[index];
+    // console.log(elementToUpdate);
+    // elementToUpdate = { ...elementToUpdate, checked: event.target.checked };
+    // console.log(elementToUpdate);
+    // arrayClone.splice(index, 1, elementToUpdate);
+    //console.log(arrayClone);
+    setChecked(checkedClone);
   };
 
   return (
-    <div className="Root">
+    <div className="max-w-sm m-1 p-1">
       {data.map((dataItem) => {
         let family = null;
         if (dataItem.children) {
           family = dataItem.children.map((item) => {
             const keyArray = item.key;
             const arrayLength = keyArray.length;
+            console.log(checked.findIndex((check) => check === item.key) < 0);
             return (
               <Node
                 onChange={(event) =>
-                  onChangeHandler(event, dataItem.children, keyArray, true)
+                  onChangeHandler(event, dataItem.children, keyArray)
                 }
+                checked={checked.findIndex((check) => check === item.key) < 0}
                 title={item.title}
                 nodeKey={keyArray[arrayLength]}
                 key={item.key}
@@ -73,12 +79,10 @@ const Root = () => {
             className="flex flex-col justify-start items-start bg-gray-200"
           >
             <Node
-              onChange={(event) =>
-                onChangeHandler(event, data, dataItem.key, false)
-              }
+              onChange={(event) => onChangeHandler(event, data, dataItem.key)}
               nodeKey={dataItem.key}
               title={dataItem.title}
-              checked={dataItem.checked}
+              checked={checked.findIndex((check) => check === dataItem.key) < 0}
             />
             <div className="flex flex-col justify-start items-start px-5">
               {family}
