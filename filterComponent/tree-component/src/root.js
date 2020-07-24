@@ -1,85 +1,110 @@
 import React, { useState } from "react";
-import Branch from "./branch";
 import Node from "./node";
-
-const Root = () => {
-  const [data, setData] = useState([
-    {
-      title: "George",
-      key: "0",
-      children: [
-        { title: "Bongiyangwa", key: "0-0" },
-        { title: "Alom Geer", key: "0-1" },
-        { title: "Qureshi", key: "0-2" },
-      ],
-    },
-    { title: "Mamunur", key: "1" },
-    { title: "Michael", key: "2" },
-    { title: "Bradley Cooper", key: "3" },
-    { title: "Priya", key: "4" },
-    { title: "Annie", key: "5" },
-    { title: "Random", key: "6" },
-    { title: "Geezer", key: "7" },
-  ]);
+const Root = (props) => {
   const [checked, setChecked] = useState([]);
+  const { data } = props;
 
-  const onChangeHandler = (event, datata, index, child) => {
-    const arrayClone = [...datata];
-    let newIndex = index;
-    // if (child) {
-    //   newIndex = index[index.length - 1]; //This should be correct ;
-    //   console.log(newIndex);
-    // }
-    let shouldUpdate = arrayClone.find((item) => checked.key === newIndex);
-    console.log(shouldUpdate);
-    let elementToUpdate = arrayClone[newIndex];
-    console.log(elementToUpdate);
-    elementToUpdate = { ...elementToUpdate, checked: event.target.checked };
-    console.log(elementToUpdate);
-    arrayClone.splice(newIndex, 1, elementToUpdate);
-    console.log(arrayClone);
-    if (child) {
-      // const finalData = [...data];
+  /*onChildHandler function takes data, value and check
+   *It will return a null value if the given node as no children
+   *However, if the node has children nodes, it loops through those children
+   *and recursively calls the function for each one, repeating the process.
+   */
+  /** Function has a second feature which allows for
+   * unticking of parent component also unticking children components
+   */
 
-      setData(arrayClone);
-    } else {
-      setData(arrayClone);
+  const onChildHandler = (data, value, check) => {
+    if (!data.children) return;
+    else {
+      const arrayToReturn = [];
+      const children = data.children;
+      if (value) {
+        for (let child in children) {
+          const helper = children[child];
+          if (helper.children) {
+            arrayToReturn.push(onChildHandler(helper.children, value, check));
+          } else {
+            if (!check.find((item) => item === helper.key)) {
+              arrayToReturn.push(helper.key);
+            }
+          }
+        }
+      } else {
+        const arrayToReturn = check;
+        data.children.forEach((element) => {
+          const keyToRemove = element.key;
+          const indexOfKey = arrayToReturn.find((key) => key === keyToRemove);
+          arrayToReturn.splice(indexOfKey, 1);
+        });
+      }
+      return arrayToReturn;
     }
   };
 
+  //OnChangeHandler is adding and removing items from the 'checked' Array
+  const onChangeHandler = (event, index, revelantData) => {
+    const checkedClone = [...checked];
+    const indexLastDigit = index.split("")[index.length - 1];
+    let shouldUpdate = checkedClone.findIndex((item) => item === index);
+    if (event.target.checked) {
+      const arrayFromChildren = onChildHandler(
+        revelantData[indexLastDigit],
+        event.target.checked,
+        checkedClone
+      );
+      checkedClone.push(index);
+      for (let key in arrayFromChildren) {
+        checkedClone.push(arrayFromChildren[key]);
+      }
+    } else {
+      checkedClone.splice(shouldUpdate, 1);
+      onChildHandler(
+        revelantData[indexLastDigit],
+        event.target.checked,
+        checkedClone
+      );
+    }
+    setChecked(checkedClone);
+  };
+
   return (
-    <div className="Root">
+    //Main return method for root
+    //method checks dataItem for if they have children and if they do then map through the children and render them.
+    //tailwind also used to create max width, padding and margin
+    <div className="max-w-sm m-1 p-1">
       {data.map((dataItem) => {
         let family = null;
         if (dataItem.children) {
           family = dataItem.children.map((item) => {
-            const keyArray = item.key;
-            const arrayLength = keyArray.length;
+            const arrayLength = item.key.length;
             return (
+              //Node component used to render children
               <Node
                 onChange={(event) =>
-                  onChangeHandler(event, dataItem.children, keyArray, true)
+                  onChangeHandler(event, item.key, dataItem.children)
                 }
+                checked={checked.find((check) => check === item.key)}
                 title={item.title}
-                nodeKey={keyArray[arrayLength]}
+                nodeKey={item.key[arrayLength]}
                 key={item.key}
               />
             );
           });
         }
         return (
+          //Here, parent components are rendered using Node component
+          // TailwindCSS used to implement flex and arrange nodes vertically
           <div
             key={dataItem.key}
             className="flex flex-col justify-start items-start bg-gray-200"
           >
             <Node
-              onChange={(event) =>
-                onChangeHandler(event, data, dataItem.key, false)
-              }
+              onChange={(event) => onChangeHandler(event, dataItem.key, data)}
               nodeKey={dataItem.key}
               title={dataItem.title}
-              checked={dataItem.checked}
+              checked={checked.find((check) => check === dataItem.key)}
             />
+            {/* TailwindCSS used here to indent children nodes */}
             <div className="flex flex-col justify-start items-start px-5">
               {family}
             </div>

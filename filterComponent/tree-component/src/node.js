@@ -1,6 +1,6 @@
 import React from "react";
 import { Checkbox } from "antd";
-
+//Here the Nodes are created using Antd Checkbox components which have keyboard accessibility features
 const Node = (props) => {
   return (
     <Checkbox

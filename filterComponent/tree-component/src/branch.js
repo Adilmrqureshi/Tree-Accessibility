@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Node from "./node";
 
+//Not in use for now
+
 const Branch = (props) => {
   return (
     <div className="flex flex-col justify-start items-start bg-gray-200">
