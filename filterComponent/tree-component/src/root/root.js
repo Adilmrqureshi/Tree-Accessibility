@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Node from "./node";
+import Node from "../node";
 const Root = (props) => {
   const [checked, setChecked] = useState([]);
   const { data } = props;
@@ -14,16 +14,20 @@ const Root = (props) => {
    */
 
   const onChildHandler = (data, value, check) => {
-    if (!data.children) return;
+    //if the component has no children then it returns
+    const children = data.children;
+    if (!children) return;
     else {
       const arrayToReturn = [];
-      const children = data.children;
+      //this checked whether event.target.checked is true which means that the use checked a box
       if (value) {
         for (let child in children) {
           const helper = children[child];
           if (helper.children) {
+            //this is a recursive call which allows this solution to support an infinite amount of nested children
             arrayToReturn.push(onChildHandler(helper.children, value, check));
           } else {
+            //If this is component
             if (!check.find((item) => item === helper.key)) {
               arrayToReturn.push(helper.key);
             }
@@ -31,7 +35,7 @@ const Root = (props) => {
         }
       } else {
         const arrayToReturn = check;
-        data.children.forEach((element) => {
+        children.forEach((element) => {
           const keyToRemove = element.key;
           const indexOfKey = arrayToReturn.find((key) => key === keyToRemove);
           arrayToReturn.splice(indexOfKey, 1);
