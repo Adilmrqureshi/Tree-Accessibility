@@ -2,7 +2,7 @@ import React, { useState, Fragment } from "react";
 import { Checkbox } from "antd";
 
 const CheckboxGroup = Checkbox.Group;
-
+//Branch component is takes the children of a given node and creates a CheckBoxGroup to create parent - children interactivity
 const Branch = (props) => {
   return (
     <Fragment>
@@ -17,30 +17,3 @@ const Branch = (props) => {
 };
 
 export default Branch;
-
-/*{
-   <Checkbox
-          indeterminate={this.state.indeterminate}
-          onChange={this.onCheckAllChange}
-          checked={this.state.checkAll}
-        >
-          Check all
-        </Checkbox> 
-}*/
-
-// const Branch = (props) => {
-//   return (
-//     <div className="flex flex-col justify-start items-start bg-gray-200">
-//       {props.data.map((item, index) => {
-//         return (
-//           <Node
-//             key={item.key}
-//             title={item.title}
-//             checked={props.data[index].checked}
-//             onChange={props.onChange}
-//           />
-//         );
-//       })}
-//     </div>
-//   );
-// };
