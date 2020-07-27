@@ -9,6 +9,11 @@ const Node = (props) => {
   const [checkAll, setcheckAll] = useState(false);
   const [display, setDisplay] = useState([]);
 
+  /*
+    useEffect transforms the array of children nodes by taking out the title props
+    and creating an array of strings from the titles
+    display and setDisplay are utilized here
+  */
   useEffect(() => {
     let displayTitles = null;
     if (props.data.children) {
@@ -17,13 +22,15 @@ const Node = (props) => {
     setDisplay(displayTitles);
   }, []);
 
+  //This is the function for the parent components, It gives the functionality to check all children
   const onCheckAllChange = (e) => {
     setCheckedList(e.target.checked ? display : []);
     setIndeterminate(false);
     setcheckAll(e.target.checked);
   };
-
+  //onChange allows children nodes to be individually ticked and can also tick parent if all chidren are ticked.
   const onChange = (checkedList) => {
+    console.log();
     setCheckedList(checkedList);
     setIndeterminate(
       !!checkedList.length && checkedList.length < display.length
@@ -31,7 +38,7 @@ const Node = (props) => {
     setcheckAll(checkedList.length === display.length);
   };
 
-  //If the node has children we will display its children
+  //If the node has children we will display its children in the Branch Component
   let branch = null;
   if (display) {
     branch = (
@@ -46,13 +53,12 @@ const Node = (props) => {
   }
 
   return (
+    //These are the parent components that will be rendered to the screen
     <div className="flex flex-col justify-start items-start bg-gray-200">
       <Checkbox
-        //onChange={props.onChange}
         indeterminate={indeterminate}
         onChange={onCheckAllChange}
         checked={checkAll}
-        //checked={props.checked}
         tabindex={props.nodeKey}
         {...props}
       >
