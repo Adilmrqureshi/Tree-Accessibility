@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Checkbox } from "antd";
 import Branch from "./branch";
+import useChild from "./hooks/useChild";
 
 //Here the Nodes are created using Antd Checkbox components which have keyboard accessibility features
 const Node = (props) => {
@@ -8,6 +9,7 @@ const Node = (props) => {
   const [indeterminate, setIndeterminate] = useState(false);
   const [checkAll, setcheckAll] = useState(false);
   const [display, setDisplay] = useState([]);
+  const [parents, setParents] = useState([]);
 
   /*
     useEffect transforms the array of children nodes by taking out the title props
@@ -17,10 +19,30 @@ const Node = (props) => {
   useEffect(() => {
     let displayTitles = null;
     if (props.data.children) {
+      //displayTitles = childHandler(props.data.children).map(
+      //({ title }) => title
+      //);
       displayTitles = props.data.children.map(({ title }) => title);
     }
     setDisplay(displayTitles);
   }, []);
+
+  //This function will take all of the element and seperate them into elements that have children and elements that don't
+  const childHandler = (data) => {
+    const childrenArray = [];
+    const parentArray = [...parents];
+    data.forEach((element) => {
+      if (element.children) {
+        childrenArray.push(childHandler(element.children));
+        parentArray.push(element);
+        setParents(parentArray);
+      } else {
+        childrenArray.push(element);
+      }
+    });
+    console.log(childrenArray, "Children Array");
+    return childrenArray;
+  };
 
   //This is the function for the parent components, It gives the functionality to check all children
   const onCheckAllChange = (e) => {
@@ -30,7 +52,6 @@ const Node = (props) => {
   };
   //onChange allows children nodes to be individually ticked and can also tick parent if all chidren are ticked.
   const onChange = (checkedList) => {
-    console.log();
     setCheckedList(checkedList);
     setIndeterminate(
       !!checkedList.length && checkedList.length < display.length
@@ -39,6 +60,7 @@ const Node = (props) => {
   };
 
   //If the node has children we will display its children in the Branch Component
+
   let branch = null;
   if (display) {
     branch = (
@@ -70,3 +92,19 @@ const Node = (props) => {
 };
 
 export default Node;
+
+// const createChildren = (children) => {
+//   let hasChildren = false;
+//   let renderComponent = null;
+//   for (let child in children) {
+//     if (!child.children) {
+//       continue;
+//     } else {
+//       hasChildren = true;
+//       break;
+//     }
+//   }
+//   if (hasChildren) {
+//   } else {
+//   }
+// };

@@ -100,7 +100,7 @@ const Root = (props) => {
           // TailwindCSS used to implement flex and arrange nodes vertically
           <div
             key={dataItem.key}
-            className="flex flex-col justify-start items-start bg-gray-200"
+            className="flex flex-col justify-start items-start bg-gray-200 tree"
           >
             <Node
               onChange={(event) => onChangeHandler(event, dataItem.key, data)}

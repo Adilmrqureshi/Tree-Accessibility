@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./App.css";
 //import Root from "./root/root";
 import Root from "./root/nRoot";
+import Testing from "./Testing";
 
 //App.js implements Root
 //Move state here
@@ -13,19 +14,24 @@ function App() {
       title: "George",
       key: "0",
       children: [
-        { title: "Bongiyangwa", key: "0-0" },
-        { title: "Alom Geer", key: "0-1" },
         {
-          title: "Qureshi",
-          key: "0-2",
+          title: "Bongiyangwa",
+          key: "0-0",
+          children: [{ title: "Grandchild", key: "0-0-1" }],
         },
+        { title: "Alom Geer", key: "0-1" },
+        { title: "Qureshi", key: "0-2" },
       ],
     },
     {
       title: "Mamunur",
       key: "1",
       children: [
-        { title: "Bongiyangwa", key: "1-0" },
+        {
+          title: "Bongiyangwa",
+          key: "1-0",
+          children: [{ title: "Grandchild2", key: "1-0-0" }],
+        },
         { title: "Alom Geer", key: "1-1" },
         { title: "Qureshi", key: "1-2" },
       ],
@@ -45,3 +51,4 @@ function App() {
 }
 
 export default App;
+//
