@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Checkbox } from "antd";
 import Branch from "./branch";
-import useChild from "./hooks/useChild";
 
 //Here the Nodes are created using Antd Checkbox components which have keyboard accessibility features
 const Node = (props) => {
@@ -17,31 +16,62 @@ const Node = (props) => {
     display and setDisplay are utilized here
   */
   useEffect(() => {
-    let displayTitles = null;
+    let displayItems = null;
     if (props.data.children) {
-      //displayTitles = childHandler(props.data.children).map(
-      //({ title }) => title
-      //);
-      displayTitles = props.data.children.map(({ title }) => title);
+      displayItems = childHandler(props.data.children);
+      //displayTitles = props.data.children.map(({ title }) => title);
     }
-    setDisplay(displayTitles);
+    //console.log(displayItems, "Display Items");
+    setDisplay(displayItems);
   }, []);
 
   //This function will take all of the element and seperate them into elements that have children and elements that don't
   const childHandler = (data) => {
     const childrenArray = [];
-    const parentArray = [...parents];
+    const parentArray = [];
     data.forEach((element) => {
       if (element.children) {
-        childrenArray.push(childHandler(element.children));
         parentArray.push(element);
-        setParents(parentArray);
+        childrenArray.push(childHandler(element.children));
       } else {
         childrenArray.push(element);
       }
     });
-    console.log(childrenArray, "Children Array");
+    setParents(parentArray);
     return childrenArray;
+  };
+
+  /*
+    GrandparentHandler handles the creation of the Parent node (Checkbox)
+    and the creation of its children (Branch)
+  */
+  const makeGrandparentHandler = (key, checkAll, title, children) => {
+    console.log(typeof key, "key");
+    // console.log(checkAll, "checkAll");
+    // console.log(title, "title");
+    // console.log(children, "children");
+    // console.log(indeterminate, "indeterminate");
+    const childenToString = children.map(({ title }) => title);
+    return (
+      <div className="flex flex-col justify-start items-start bg-gray-200 px-2">
+        <Checkbox
+          indeterminate={indeterminate}
+          onChange={onCheckAllChange}
+          checked={checkAll}
+          tabindex={key}
+          {...props}
+        >
+          {" " + title}
+        </Checkbox>
+        <div className="flex flex-col justify-start items-start px-5">
+          <Branch
+            defaultOptions={childenToString}
+            onChange={onChange}
+            checkedList={checkedList}
+          />
+        </div>
+      </div>
+    );
   };
 
   //This is the function for the parent components, It gives the functionality to check all children
@@ -61,12 +91,31 @@ const Node = (props) => {
 
   //If the node has children we will display its children in the Branch Component
 
-  let branch = null;
+  let branch = [];
   if (display) {
-    branch = (
-      <div className="flex flex-col justify-start items-start px-5">
+    const branchData = [];
+    let parentCounter = 0;
+    display.forEach((element) => {
+      if (Array.isArray(element)) {
+        branch.push(
+          makeGrandparentHandler(
+            parents[parentCounter].key,
+            checkAll,
+            parents[parentCounter].title,
+            element
+          )
+        );
+        parentCounter++;
+      } else {
+        branchData.push(element.title);
+      }
+      // console.log(branchData, "Branch Data");
+      // console.log(checkedList, "checkedList");
+    });
+    branch.push(
+      <div className="flex flex-col justify-start items-start px-2">
         <Branch
-          defaultOptions={display}
+          defaultOptions={branchData}
           onChange={onChange}
           checkedList={checkedList}
         />
