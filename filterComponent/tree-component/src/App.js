@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
 //import Root from "./root/root";
-import Root from "./root/nRoot";
+import Root from "./components/root/nRoot";
 import Testing from "./Testing";
 
 //App.js implements Root
