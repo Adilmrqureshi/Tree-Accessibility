@@ -94,7 +94,7 @@ import { RootContext } from "../../context/rootContext";
 const Node = (props) => {
   const [checkedList, setCheckedList] = useState([]);
   const [indeterminate, setIndeterminate] = useState(false);
-  const [checkAll, setcheckAll] = useState(false);
+  const [defaultData, setDefaultData] = useState([]);
   const [display, setDisplay] = useState([]);
   const context = useContext(RootContext);
 
@@ -102,8 +102,9 @@ const Node = (props) => {
     let displayTitles = null;
     if (props.data.children) {
       displayTitles = props.data.children.map(({ title }) => title);
+      setDefaultData(props.data.children);
+      setDisplay(displayTitles);
     }
-    setDisplay(displayTitles);
   }, []);
 
   // const onCheckAllChange = (e) => {
@@ -134,6 +135,7 @@ const Node = (props) => {
         <Branch
           defaultOptions={display}
           onChange={onChange}
+          data={defaultData}
           checkedList={checkedList}
         />
       </div>

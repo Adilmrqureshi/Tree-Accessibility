@@ -1,7 +1,6 @@
-import React, { Fragment, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Checkbox } from "antd";
 import "./branch.css";
-import { displayItems } from "../node/displayItems";
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -9,6 +8,27 @@ const CheckboxGroup = Checkbox.Group;
 const Branch = (props) => {
   const [checkAll, setcheckAll] = useState(false);
   const [checkedList, setCheckedList] = useState([]);
+  const [hasChildren, setHasChildren] = useState("");
+  const [remainder, setRemainder] = useState([]);
+
+  const { data } = props;
+
+  useEffect(() => {
+    const parents = [...hasChildren];
+    const remain = [...remainder];
+    console.log(data);
+    if (data.length > 0) {
+      data.forEach((element) => {
+        if (element.children) {
+          parents.push(data);
+        } else {
+          remain.push(element);
+        }
+      });
+      setHasChildren(parents);
+      setRemainder(remain);
+    }
+  }, []);
 
   //This function will cause the parent component to check all of the children
   const onCheckAllChange = (e) => {
@@ -24,14 +44,14 @@ const Branch = (props) => {
 
   let checkbox = null;
   //if the elemenet is on the root level then I don't want to include the checkbox
-  if (props.embedded) {
+  if (hasChildren !== "") {
     checkbox = (
       <div>
         <Checkbox onChange={onCheckAllChange} checked={checkAll}>
-          {props.title}
+          {hasChildren.title}
         </Checkbox>
         <CheckboxGroup
-          options={props.defaultOptions}
+          options={hasChildren.children}
           value={checkedList}
           onChange={onChange}
         />

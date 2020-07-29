@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import "./App.css";
 //import Root from "./root/root";
 import Root from "./components/root/nRoot";
-import Testing from "./Testing";
 
 //App.js implements Root
 //Move state here
