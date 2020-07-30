@@ -8,7 +8,7 @@ const CheckboxGroup = Checkbox.Group;
 const Branch = (props) => {
   const [checkAll, setcheckAll] = useState(false);
   const [checkedList, setCheckedList] = useState([]);
-  const [hasChildren, setHasChildren] = useState("");
+  const [hasChildren, setHasChildren] = useState([]);
   const [remainder, setRemainder] = useState([]);
 
   const { data } = props;
@@ -28,7 +28,7 @@ const Branch = (props) => {
       setHasChildren(parents);
       setRemainder(remain);
     }
-  }, []);
+  }, [data]);
 
   //This function will cause the parent component to check all of the children
   const onCheckAllChange = (e) => {
@@ -37,14 +37,13 @@ const Branch = (props) => {
   };
 
   const onChange = (checkedList) => {
-    console.log(checkedList);
     setCheckedList(checkedList);
     setcheckAll(checkedList.length === props.defaultOptions.length);
   };
 
   let checkbox = null;
   //if the elemenet is on the root level then I don't want to include the checkbox
-  if (hasChildren !== "") {
+  if (hasChildren.length < 0) {
     checkbox = (
       <div>
         <Checkbox onChange={onCheckAllChange} checked={checkAll}>
