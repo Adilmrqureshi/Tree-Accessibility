@@ -9,7 +9,7 @@ const RootProvider = (props) => {
   const [checkAll, setCheckAll] = useState(false);
 
   const onCheckAllHandler = (shouldCheck) => {
-    setCheckAll((prevState) => shouldCheck);
+    setCheckAll(shouldCheck);
   };
   return (
     <RootContext.Provider value={{ setCheck: onCheckAllHandler, checkAll }}>
