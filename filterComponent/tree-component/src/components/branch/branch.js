@@ -18,7 +18,6 @@ const Branch = (props) => {
   useEffect(() => {
     const parents = [...hasChildren];
     const remain = [...remainder];
-    console.log(data);
     if (data.length > 0) {
       data.forEach((element, index) => {
         if (element.children) {
@@ -27,7 +26,6 @@ const Branch = (props) => {
           remain.push(element);
         }
       });
-      console.log(parents, "Parents");
       const remainTitles = remain.map(({ title }) => title);
       setHasChildren(parents);
       setRemainder(remainTitles);
@@ -36,13 +34,17 @@ const Branch = (props) => {
 
   //This function will cause the parent component to check all of the children
   const onCheckAllChange = (e, defaultOptions) => {
-    console.log(context.checkAll);
-    setCheckedList(e.target.checked ? defaultOptions : []);
+    setCheckedList((prevState) =>
+      prevState.concat(e.target.checked ? defaultOptions : [])
+    );
     setcheckAll(e.target.checked || context.checkAll);
   };
 
   const onChange = (checkedList) => {
-    setCheckedList(checkedList);
+    setCheckedList((prevState) => {
+      console.log(prevState.concat(checkedList));
+      return checkedList;
+    });
     setcheckAll(checkedList.length === props.defaultOptions.length);
   };
 
@@ -50,7 +52,6 @@ const Branch = (props) => {
   //if the elemenet is on the root level then I don't want to include the checkbox
 
   if (hasChildren.length > 0) {
-    console.log(hasChildren, "HasChildren");
     const hasChildTitles = hasChildren[0].children.map(({ title }) => title);
     checkbox = (
       <div>
@@ -70,8 +71,8 @@ const Branch = (props) => {
         <div className="site-checkbox-all-wrapper branch px-5">
           <CheckboxGroup
             options={remainder}
-            value={checkedList}
-            onChange={onChange}
+            value={props.checkedList}
+            onChange={props.onChange}
           />
         </div>
       </div>
