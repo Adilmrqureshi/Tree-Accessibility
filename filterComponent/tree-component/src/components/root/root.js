@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import Node from "../node";
+import Node from "../node/node";
+
 const Root = (props) => {
   const [checked, setChecked] = useState([]);
   const { data } = props;
