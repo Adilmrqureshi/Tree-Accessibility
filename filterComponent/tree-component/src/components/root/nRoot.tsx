@@ -1,33 +1,19 @@
 import React from "react";
 import Node from "../node/node";
-import RootContext from "../../context/rootContext";
 import { CheckElement } from "../../interface";
 
 interface Props {
   data: CheckElement[];
   checkedKeys: Check[];
-  onChecked: (payload: { key: string; checked: boolean }) => void;
 }
 
-const Root: React.FC<Props> = ({ data, checkedKeys, onChecked }) => {
+const Root: React.FC<Props> = ({ data, checkedKeys }) => {
   return (
     <div className="flex flex-col items-start">
-      <RootContext
-        checkAll={false}
-        checkedKeys={checkedKeys}
-        onChecked={onChecked}
-      >
-        {/*Function to Map through items and create CheckBox groups*/}
-        {data.map((dataItem) => {
-          return (
-            <Node
-              indent={0}
-              data={dataItem}
-              defaultOptions={dataItem.children}
-            />
-          );
-        })}
-      </RootContext>
+      {/*Function to Map through items and create CheckBox groups*/}
+      {data.map((dataItem) => {
+        return <Node indent={2} data={dataItem} />;
+      })}
     </div>
   );
 };

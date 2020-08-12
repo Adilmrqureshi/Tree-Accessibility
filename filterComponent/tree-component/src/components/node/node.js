@@ -1,12 +1,11 @@
-import React, { useContext } from "react";
+import React, { useContext, memo } from "react";
 import { Checkbox } from "antd";
 import { RootContext } from "../../context/rootContext";
 
 //Here the Nodes are created using Antd Checkbox components which have keyboard accessibility features
 
-function Node(props) {
+function Node({ data, indent }) {
   const context = useContext(RootContext);
-  const { data } = props;
 
   const onCheck = (e) => {
     context.onChecked({
@@ -18,20 +17,25 @@ function Node(props) {
   // If the node has children we will display its children
   let branch = null;
   if (data.children) {
-    console.log(data.children);
-    branch = data.children.map((item) => <Node data={item} />);
+    branch = data.children.map((item) => (
+      <Node data={item} indent={indent + 7} />
+    ));
   }
-  const shouldCheck =
-    context.checkedKeys.find((element) => element.key === props.data.key) !==
-    undefined;
+  const shouldCheck = context.checkedKeys.find(
+    (element) => element.key === data.key
+  );
   return (
     <div>
-      <Checkbox onChange={onCheck} checked={shouldCheck} {...props}>
-        {props.data.title}
+      <Checkbox
+        style={{ paddingLeft: indent }}
+        onChange={(event) => onCheck(event)}
+        checked={shouldCheck ? shouldCheck.checked : false}
+      >
+        {data.title}
       </Checkbox>
       {branch}
     </div>
   );
 }
 
-export default Node;
+export default memo(Node);
