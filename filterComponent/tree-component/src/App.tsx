@@ -74,18 +74,22 @@ const App = () => {
   function onCheckHandler(payload: { checked: boolean; key: string }) {
     //payload : {checked: boolean, key: string}
     let checkedClone: Check[] = [...checkedKeys];
-    if (payload.checked) {
+    const elementToCheck = checkedClone.find(
+      (element) => element.key === payload.key
+    );
+    const IndexToCheck = checkedClone.findIndex(
+      (element) => element.key === payload.key
+    );
+    if (payload.checked !== undefined) {
+      console.log(payload.checked);
       if (payload.key !== undefined) {
-        const elementToCheck = checkedClone.find(
-          (element) => element.key === payload.key
-        );
-        const IndexToCheck = checkedClone.findIndex(
-          (element) => element.key === payload.key
-        );
         if (elementToCheck !== undefined)
           if (elementToCheck.children) {
             // This method will return all of the children of an element in a nested array
-            const flattened = checkAllChildren(elementToCheck.children, true);
+            const flattened = checkAllChildren(
+              elementToCheck.children,
+              payload.checked
+            );
             flattened.forEach((child) => {
               const foundEle = checkedClone.findIndex(
                 (ele) => ele.key === child.key
@@ -93,27 +97,24 @@ const App = () => {
               if (foundEle > -1) {
                 checkedClone[foundEle] = {
                   ...checkedClone[foundEle],
-                  checked: true,
+                  checked: payload.checked,
                 };
               }
             });
             // Change the parent element to true
             checkedClone[IndexToCheck] = {
               ...elementToCheck,
-              checked: true,
+              checked: payload.checked,
               children: elementToCheck.children,
             };
           } else {
-            checkedClone[IndexToCheck] = { ...elementToCheck, checked: true };
+            checkedClone[IndexToCheck] = {
+              ...elementToCheck,
+              checked: payload.checked,
+            };
           }
         setCheckedKeys(checkedClone);
       }
-    } else {
-      checkedClone = [...checkedKeys];
-      const finalArray = checkedClone.filter(
-        (element) => element.key !== payload.key
-      );
-      setCheckedKeys(finalArray);
     }
   }
 
