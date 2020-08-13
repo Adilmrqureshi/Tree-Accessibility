@@ -1,4 +1,4 @@
-import React, { useContext, memo } from "react";
+import React, { useContext, memo, useCallback } from "react";
 import { Checkbox } from "antd";
 import { RootContext } from "../../context/rootContext";
 
@@ -7,12 +7,15 @@ import { RootContext } from "../../context/rootContext";
 function Node({ data, indent }) {
   const context = useContext(RootContext);
 
-  const onCheck = (e) => {
-    context.onChecked({
-      key: data.key,
-      checked: e.target.checked,
-    });
-  };
+  const onCheck = useCallback(
+    (e) => {
+      context.onChecked({
+        key: data.key,
+        checked: e.target.checked,
+      });
+    },
+    [data.key, context]
+  );
 
   // If the node has children we will display its children
   let branch = null;
@@ -28,7 +31,7 @@ function Node({ data, indent }) {
     <div>
       <Checkbox
         style={{ paddingLeft: indent }}
-        onChange={(event) => onCheck(event)}
+        onChange={onCheck}
         checked={shouldCheck ? shouldCheck.checked : false}
       >
         {data.title}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./App.css";
 //import Root from "./root/root";
 import Root from "./components/root/nRoot";
@@ -52,76 +52,147 @@ const App = () => {
     setCheckedKeys(checkedClone);
   }, []);
 
-  function checkAllChildren(data: CheckElement[] | Check[], check: boolean) {
-    let arraytoReturn: any[] = [];
-    data.forEach((element: CheckElement | Check) => {
-      if (element.children !== undefined) {
-        arraytoReturn.push({
-          key: element.key,
-          checked: check,
-          children: element.children,
-        });
-        arraytoReturn = arraytoReturn.concat(
-          checkAllChildren(element.children, check)
+  const checkAllChildren = useCallback(
+    (data: CheckElement[] | Check[], check: boolean) => {
+      let arraytoReturn: any[] = [];
+      data.forEach((element: CheckElement | Check) => {
+        if (element.children !== undefined) {
+          arraytoReturn.push({
+            key: element.key,
+            checked: check,
+            children: element.children,
+          });
+          arraytoReturn = arraytoReturn.concat(
+            checkAllChildren(element.children, check)
+          );
+        } else {
+          arraytoReturn.push({ key: element.key, checked: check });
+        }
+      });
+      return arraytoReturn;
+    },
+    []
+  );
+
+  const splitKey = (key: string) => {
+    let parentKey: string[] | string = key.split("");
+    parentKey = parentKey.slice(0, key.length - 2);
+    return (parentKey = parentKey.join(""));
+  };
+
+  // If the children are unchecked then uncheck the children
+  const checkAllSiblings = useCallback(
+    (payload: Check): any => {
+      const checkedClone: Check[] = [...checkedKeys];
+      let arrayToReturn: Check[] = [];
+      const { key, checked } = payload;
+      // The base case: If the key is of length 1 then we have reach the highest level in the tree and there is no more need for recursion
+      if (key.length <= 1) return;
+      // Might need to check the top parent element in this block if needed
+      else {
+        // every digit in the key apart from the last two gives information about the parents
+        let parentKey: string[] | string = splitKey(key);
+        // if it is not a top most parent element then run this function again until it reached that level
+        if (parentKey.length > 1) {
+          arrayToReturn = arrayToReturn.concat(
+            checkAllSiblings({ key: parentKey, checked })
+          );
+        }
+        // I then check if the siblings are checked and if so then check the parent
+        const element = checkedClone.find(
+          (element) => element.key === parentKey
         );
-      } else {
-        arraytoReturn.push({ key: element.key, checked: check });
+        const areSiblingsChecked: Check[] = [];
+        // All of the siblings of the current element
+        const siblings: Check[] = checkedClone.filter((sibling) => {
+          let siblingKey: string[] | string = splitKey(sibling.key);
+          return (
+            sibling.key.length === key.length &&
+            siblingKey === parentKey &&
+            sibling.key !== key
+          );
+        });
+        siblings.push({ key: key, checked: checked });
+        console.log(siblings, "total siblings");
+        siblings.forEach((sibling) => {
+          if (sibling.checked) areSiblingsChecked.push(sibling);
+        });
+        console.log(areSiblingsChecked, "are siblings checked");
+        if (areSiblingsChecked.length === siblings.length) {
+          const returnEle = { ...element, checked: true, key: parentKey };
+          arrayToReturn.push(returnEle);
+          return arrayToReturn;
+        } else {
+          const returnEle = { ...element, checked: false, key: parentKey };
+          arrayToReturn.push(returnEle);
+          return arrayToReturn;
+        }
       }
-    });
-    return arraytoReturn;
-  }
+    },
+    [checkedKeys]
+  );
 
-  function onCheckHandler(payload: { checked: boolean; key: string }) {
-    //payload : {checked: boolean, key: string}
-    let checkedClone: Check[] = [...checkedKeys];
-    const elementToCheck = checkedClone.find(
-      (element) => element.key === payload.key
-    );
-    const IndexToCheck = checkedClone.findIndex(
-      (element) => element.key === payload.key
-    );
-    if (payload.checked !== undefined) {
-      console.log(payload.checked);
-      if (payload.key !== undefined) {
-        if (elementToCheck !== undefined)
-          if (elementToCheck.children) {
-            // This method will return all of the children of an element in a nested array
-            const flattened = checkAllChildren(
-              elementToCheck.children,
-              payload.checked
+  const onCheckHandler = useCallback(
+    (payload: Check) => {
+      //payload : {checked: boolean, key: string}
+      let checkedClone: Check[] = [...checkedKeys];
+      const elementToCheck = checkedClone.find(
+        (element) => element.key === payload.key
+      );
+      const IndexToCheck = checkedClone.findIndex(
+        (element) => element.key === payload.key
+      );
+      if (elementToCheck !== undefined)
+        if (elementToCheck.children) {
+          // This method will return all of the children of an element in a nested array
+          const flattened = checkAllChildren(
+            elementToCheck.children,
+            payload.checked
+          );
+          flattened.forEach((child) => {
+            const foundEle = checkedClone.findIndex(
+              (ele) => ele.key === child.key
             );
-            flattened.forEach((child) => {
-              const foundEle = checkedClone.findIndex(
-                (ele) => ele.key === child.key
-              );
-              if (foundEle > -1) {
-                checkedClone[foundEle] = {
-                  ...checkedClone[foundEle],
-                  checked: payload.checked,
-                };
-              }
-            });
-            // Change the parent element to true
-            checkedClone[IndexToCheck] = {
-              ...elementToCheck,
-              checked: payload.checked,
-              children: elementToCheck.children,
-            };
-          } else {
-            checkedClone[IndexToCheck] = {
-              ...elementToCheck,
-              checked: payload.checked,
-            };
-          }
-        setCheckedKeys(checkedClone);
+            if (foundEle > -1) {
+              checkedClone[foundEle] = {
+                ...checkedClone[foundEle],
+                checked: payload.checked,
+              };
+            }
+          });
+          // Change the parent element to true
+          checkedClone[IndexToCheck] = {
+            ...elementToCheck,
+            checked: payload.checked,
+            children: elementToCheck.children,
+          };
+        } else {
+          checkedClone[IndexToCheck] = {
+            ...elementToCheck,
+            checked: payload.checked,
+          };
+        }
+      setCheckedKeys(checkedClone);
+      let siblings = checkAllSiblings(payload);
+      if (siblings !== undefined) {
+        siblings = siblings.filter(
+          (ele: Check | undefined) => ele !== undefined
+        );
+        siblings.forEach((sibling: Check) => {
+          const index = checkedClone.findIndex((check) => {
+            return check.key === sibling.key;
+          });
+          checkedClone[index] = sibling;
+        });
       }
-    }
-  }
-
+      setCheckedKeys(checkedClone);
+    },
+    [checkAllChildren, checkAllSiblings, checkedKeys]
+  );
   return (
     <RootContext checkedKeys={checkedKeys} onChecked={onCheckHandler}>
       <div className="App">
-        <Root data={data} checkedKeys={checkedKeys} />
+        <Root data={data} />
       </div>
     </RootContext>
   );

@@ -4,14 +4,14 @@ type ContextProps = {
   checkAll?: boolean;
   expandedKeys?: Check[];
   checkedKeys?: Check[];
-  onChecked?: (payload: { key: string; checked: boolean }) => void;
+  onChecked?: (payload: Check) => void;
 };
 
 interface Props {
   checkAll?: boolean;
   expandedKeys?: Check[];
   checkedKeys?: Check[];
-  onChecked?: (payload: { key: string; checked: boolean }) => void;
+  onChecked?: (payload: Check) => void;
 }
 
 export const RootContext = React.createContext<Partial<ContextProps>>({});
