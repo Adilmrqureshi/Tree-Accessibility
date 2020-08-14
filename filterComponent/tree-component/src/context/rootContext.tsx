@@ -1,15 +1,15 @@
 import React from "react";
 
 type ContextProps = {
-  checkAll?: boolean;
-  expandedKeys?: Check[];
+  onExpand?: (key: string) => void;
+  expandedKeys?: string[];
   checkedKeys?: Check[];
   onChecked?: (payload: Check) => void;
 };
 
 interface Props {
-  checkAll?: boolean;
-  expandedKeys?: Check[];
+  onExpand?: (key: string) => void;
+  expandedKeys?: string[];
   checkedKeys?: Check[];
   onChecked?: (payload: Check) => void;
 }
@@ -21,7 +21,9 @@ const RootProvider: React.FC<Props> = (props) => {
     <RootContext.Provider
       value={{
         onChecked: props.onChecked,
+        onExpand: props.onExpand,
         checkedKeys: props.checkedKeys,
+        expandedKeys: props.expandedKeys,
       }}
     >
       {props.children}

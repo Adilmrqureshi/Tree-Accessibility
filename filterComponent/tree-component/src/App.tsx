@@ -45,7 +45,7 @@ const data: CheckElement[] = [
 const App = () => {
   //useState filled with practice Data, includes Children
   const [checkedKeys, setCheckedKeys] = useState<Check[]>([]);
-  //const [expandedKeys, setExpandedKeys] = useState<Check[]>([]);
+  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
 
   useEffect(() => {
     let checkedClone: Check[] = checkAllChildren(data, false);
@@ -189,11 +189,26 @@ const App = () => {
     },
     [checkAllChildren, checkAllSiblings, checkedKeys]
   );
+
+  //expand handler
+  const expandHandler = (key: string) => {
+    const expandClone = [...expandedKeys];
+    const shouldAdd = expandClone.findIndex((element) => element === key);
+    if (shouldAdd > -1) {
+      expandClone.splice(shouldAdd, 1);
+    } else {
+      expandClone.push(key);
+    }
+  };
+
   return (
-    <RootContext checkedKeys={checkedKeys} onChecked={onCheckHandler}>
-      <div className="App">
-        <Root data={data} />
-      </div>
+    <RootContext
+      checkedKeys={checkedKeys}
+      onChecked={onCheckHandler}
+      expandedKeys={expandedKeys}
+      onExpand={expandHandler}
+    >
+      <Root data={data} />
     </RootContext>
   );
 };
