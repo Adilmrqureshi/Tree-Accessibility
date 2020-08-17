@@ -27,38 +27,35 @@ function Node({ data, indent }) {
     (element) => element.key === data.key
   );
 
-  // If the node has children we will display its children
-  let branch = (
-    <Checkbox
-      style={{ paddingLeft: indent }}
-      onChange={onCheck}
-      checked={shouldCheck ? shouldCheck.checked : false}
-    >
-      {data.title}
-    </Checkbox>
-  );
-  if (data.children) {
-    branch = (
-      <Panel
-        header={
-          <Checkbox
-            style={{ paddingLeft: indent }}
-            onChange={onCheck}
-            checked={shouldCheck ? shouldCheck.checked : false}
-          >
-            {data.title}
-          </Checkbox>
-        }
-        key={data.key}
-      >
-        {data.children.map((item) => (
-          <Node data={item} indent={indent + 7} />
-        ))}
-      </Panel>
-    );
-  }
-
-  return branch;
+    if (data.children) {
+        return (
+            <Collapse>
+                {data.children.map((child) => (
+                    <Collapse.Panel header={
+                        <Checkbox
+                            style={{ paddingLeft: indent }}
+                            onChange={onCheck}
+                            checked={shouldCheck ? shouldCheck.checked : false}
+                        >
+                            {child.title}
+                        </Checkbox>
+                    }>
+                        <Node data={child} indent={indent + 7} />
+                    </Collapse.Panel>
+                ))}
+            </Collapse>
+        )
+    } else {
+        return (
+            <Checkbox
+                style={{ paddingLeft: indent }}
+                onChange={onCheck}
+                checked={shouldCheck ? shouldCheck.checked : false}
+            >
+                {data.title}
+            </Checkbox>
+        )
+    }
 }
 
 export default memo(Node);

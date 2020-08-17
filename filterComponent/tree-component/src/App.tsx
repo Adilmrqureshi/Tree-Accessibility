@@ -13,12 +13,12 @@ const data: CheckElement[] = [
     key: "0",
     children: [
       {
-        title: "Bongiyangwa",
+        title: "G - 1",
         key: "0-0",
         children: [{ title: "Grandchild", key: "0-0-1" }],
       },
-      { title: "Alom Geer", key: "0-1" },
-      { title: "Qureshi", key: "0-2" },
+      { title: "G - 2", key: "0-1" },
+      { title: "G - 3", key: "0-2" },
     ],
   },
   {
@@ -26,12 +26,12 @@ const data: CheckElement[] = [
     key: "1",
     children: [
       {
-        title: "Bongiyangwa",
+        title: "M - 1",
         key: "1-0",
         children: [{ title: "Grandchild2", key: "1-0-0" }],
       },
-      { title: "Alom Geer", key: "1-1" },
-      { title: "Qureshi", key: "1-2" },
+      { title: "M - 1", key: "1-1" },
+      { title: "M - 2", key: "1-2" },
     ],
   },
   { title: "Michael", key: "2" },
