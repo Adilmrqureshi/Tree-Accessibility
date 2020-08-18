@@ -113,11 +113,9 @@ const App = () => {
           );
         });
         siblings.push({ key: key, checked: checked });
-        console.log(siblings, "total siblings");
         siblings.forEach((sibling) => {
           if (sibling.checked) areSiblingsChecked.push(sibling);
         });
-        console.log(areSiblingsChecked, "are siblings checked");
         if (areSiblingsChecked.length === siblings.length) {
           const returnEle = { ...element, checked: true, key: parentKey };
           arrayToReturn.push(returnEle);
@@ -190,15 +188,32 @@ const App = () => {
     [checkAllChildren, checkAllSiblings, checkedKeys]
   );
 
-  //expand handler
   const expandHandler = (key: string) => {
-    const expandClone = [...expandedKeys];
+    const item = data.find((item) => item.key === key);
+    const expandClone: any[] = [...expandedKeys];
     const shouldAdd = expandClone.findIndex((element) => element === key);
     if (shouldAdd > -1) {
       expandClone.splice(shouldAdd, 1);
     } else {
       expandClone.push(key);
     }
+    if (item !== undefined && item.children) {
+      let allChildren = [];
+      let lowestLevel = 0;
+      allChildren.push(checkAllChildren(item.children, true));
+      allChildren.forEach((element) => {
+        if (element.key > lowestLevel) {
+          lowestLevel = element.key.length;
+        }
+      });
+      expandClone.push(
+        allChildren[0].map((child) => {
+          console.log(child);
+          if (child.key.length > lowestLevel) return child.key;
+        })
+      );
+    }
+    setExpandedKeys(expandClone);
   };
 
   return (
