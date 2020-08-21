@@ -87,6 +87,7 @@ const App = () => {
       let arrayToReturn: Check[] = [];
       const { key, checked } = payload;
       // The base case: If the key is of length 1 then we have reach the highest level in the tree and there is no more need for recursion
+
       if (key.length <= 1) return;
       // Might need to check the top parent element in this block if needed
       else {
@@ -189,29 +190,36 @@ const App = () => {
   );
 
   const expandHandler = (key: string) => {
-    const item = data.find((item) => item.key === key);
-    const expandClone: any[] = [...expandedKeys];
+    // const item = data.find((item) => item.key === key);
+    // const expandClone: any[] = [...expandedKeys];
+    // const shouldAdd = expandClone.findIndex((element) => element === key);
+    // if (shouldAdd > -1) {
+    //   expandClone.splice(shouldAdd, 1);
+    // } else {
+    //   expandClone.push(key);
+    // }
+    // if (item !== undefined && item.children) {
+    //   let allChildren = [];
+    //   let lowestLevel = 0;
+    //   allChildren.push(checkAllChildren(item.children, true));
+    //   allChildren.forEach((element) => {
+    //     if (element.key > lowestLevel) {
+    //       lowestLevel = element.key.length;
+    //     }
+    //   });
+    //   expandClone.push(
+    //     allChildren[0].map((child) => {
+    //       //console.log(child);
+    //       if (child.key.length > lowestLevel) return child.key;
+    //     })
+    //   );
+    // }
+    const expandClone = [...expandedKeys];
     const shouldAdd = expandClone.findIndex((element) => element === key);
     if (shouldAdd > -1) {
       expandClone.splice(shouldAdd, 1);
     } else {
       expandClone.push(key);
-    }
-    if (item !== undefined && item.children) {
-      let allChildren = [];
-      let lowestLevel = 0;
-      allChildren.push(checkAllChildren(item.children, true));
-      allChildren.forEach((element) => {
-        if (element.key > lowestLevel) {
-          lowestLevel = element.key.length;
-        }
-      });
-      expandClone.push(
-        allChildren[0].map((child) => {
-          console.log(child);
-          if (child.key.length > lowestLevel) return child.key;
-        })
-      );
     }
     setExpandedKeys(expandClone);
   };

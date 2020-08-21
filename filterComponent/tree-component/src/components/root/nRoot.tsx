@@ -11,9 +11,6 @@ interface Props {
 
 const Root: React.FC<Props> = ({ data }) => {
   const context = useContext(RootContext);
-  React.useEffect(() => {
-    console.log(context.checkedKeys);
-  }, [context.checkedKeys]);
 
   const onCheck = useCallback(
     (e: any, key: string) => {
@@ -32,6 +29,11 @@ const Root: React.FC<Props> = ({ data }) => {
       context.onExpand(key[key.length - 1]);
   };
 
+  const customPanelStyle = {
+    border: 0,
+    overflow: "hidden",
+  };
+
   return (
     <div>
       <Collapse
@@ -46,23 +48,25 @@ const Root: React.FC<Props> = ({ data }) => {
             shouldCheck = context.checkedKeys.find(
               (element) => element.key === dataItem.key
             );
+            if (shouldCheck !== undefined) shouldCheck = shouldCheck.checked;
           }
 
           if (dataItem.children) {
             render = (
               <Collapse.Panel
+                style={customPanelStyle}
                 header={
                   <Checkbox
                     style={{ paddingLeft: 2 }}
                     onChange={(event) => onCheck(event, dataItem.key)}
-                    checked={shouldCheck ? shouldCheck.checked : false}
+                    checked={shouldCheck}
                   >
                     {dataItem.title}
                   </Checkbox>
                 }
                 key={dataItem.key}
               >
-                <Node indent={2} data={dataItem} />
+                <Node indent={2} data={dataItem.children} />
               </Collapse.Panel>
             );
           } else {
@@ -71,7 +75,7 @@ const Root: React.FC<Props> = ({ data }) => {
                 <Checkbox
                   style={{ paddingLeft: 2 }}
                   onChange={(event) => onCheck(event, dataItem.key)}
-                  checked={shouldCheck ? shouldCheck.checked : false}
+                  checked={shouldCheck}
                 >
                   {dataItem.title}
                 </Checkbox>
