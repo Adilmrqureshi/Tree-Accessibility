@@ -1,4 +1,4 @@
-import React, { memo, useContext, useState, useCallback } from "react";
+import React, { memo, useContext, useCallback } from "react";
 import Node from "../node/node";
 import { CheckElement } from "../../interface";
 import { RootContext } from "../../context/rootContext";
@@ -25,7 +25,6 @@ const Root: React.FC<Props> = ({ data }) => {
   );
 
   const onExpand = (key: string[]) => {
-    console.log(key, "Before execution");
     context.onExpand(key);
   };
 

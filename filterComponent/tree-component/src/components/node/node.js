@@ -1,4 +1,4 @@
-import React, { useContext, memo, useCallback, useEffect } from "react";
+import React, { useContext, memo, useCallback } from "react";
 import { Checkbox, Collapse } from "antd";
 
 import { RootContext } from "../../context/rootContext";

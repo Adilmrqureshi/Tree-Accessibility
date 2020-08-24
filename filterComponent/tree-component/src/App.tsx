@@ -153,8 +153,7 @@ const App = () => {
           const shouldAddParent = expandClone.findIndex(
             (element) => element === elementToCheck.key
           );
-          if (shouldAddParent > -1) {
-          } else {
+          if (shouldAddParent === -1) {
             expandClone.push(elementToCheck.key);
           }
           // This will check all levels below as well as expand
@@ -172,7 +171,8 @@ const App = () => {
                   (element) => element === child.key
                 );
                 if (shouldAddChild > -1) {
-                  expandClone.splice(shouldAddChild, 1);
+                  if (elementToCheck.checked)
+                    expandClone.splice(shouldAddChild, 1);
                 } else {
                   expandClone.push(child.key);
                 }
@@ -207,35 +207,10 @@ const App = () => {
       }
       setCheckedKeys(checkedClone);
     },
-    [checkAllChildren, checkAllSiblings, checkedKeys]
+    [checkAllChildren, checkAllSiblings, checkedKeys, expandedKeys]
   );
 
   const expandHandler = (key: string[]) => {
-    // const item = data.find((item) => item.key === key);
-    // const expandClone: any[] = [...expandedKeys];
-    // const shouldAdd = expandClone.findIndex((element) => element === key);
-    // if (shouldAdd > -1) {
-    //   expandClone.splice(shouldAdd, 1);
-    // } else {
-    //   expandClone.push(key);
-    // }
-    // if (item !== undefined && item.children) {
-    //   let allChildren = [];
-    //   let lowestLevel = 0;
-    //   allChildren.push(checkAllChildren(item.children, true));
-    //   allChildren.forEach((element) => {
-    //     if (element.key > lowestLevel) {
-    //       lowestLevel = element.key.length;
-    //     }
-    //   });
-    //   expandClone.push(
-    //     allChildren[0].map((child) => {
-    //       //console.log(child);
-    //       if (child.key.length > lowestLevel) return child.key;
-    //     })
-    //   );
-    // }
-    console.log(expandedKeys, "expandedKeys");
     setExpandedKeys(key);
   };
 
