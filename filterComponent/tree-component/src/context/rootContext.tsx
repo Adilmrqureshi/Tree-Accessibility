@@ -1,14 +1,14 @@
 import React from "react";
 
 type ContextProps = {
-  onExpand?: (key: string) => void;
+  onExpand?: (key: string[]) => void;
   expandedKeys?: string[];
   checkedKeys?: Check[];
   onChecked?: (payload: Check) => void;
 };
 
 interface Props {
-  onExpand?: (key: string) => void;
+  onExpand?: (key: string[]) => void;
   expandedKeys?: string[];
   checkedKeys?: Check[];
   onChecked?: (payload: Check) => void;

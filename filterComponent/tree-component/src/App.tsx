@@ -148,6 +148,16 @@ const App = () => {
             elementToCheck.children,
             payload.checked
           );
+          // Also expands when the element is checked
+          const expandClone = [...expandedKeys];
+          const shouldAddParent = expandClone.findIndex(
+            (element) => element === elementToCheck.key
+          );
+          if (shouldAddParent > -1) {
+          } else {
+            expandClone.push(elementToCheck.key);
+          }
+          // This will check all levels below as well as expand
           flattened.forEach((child) => {
             const foundEle = checkedClone.findIndex(
               (ele) => ele.key === child.key
@@ -157,8 +167,19 @@ const App = () => {
                 ...checkedClone[foundEle],
                 checked: payload.checked,
               };
+              if (child?.children) {
+                const shouldAddChild = expandClone.findIndex(
+                  (element) => element === child.key
+                );
+                if (shouldAddChild > -1) {
+                  expandClone.splice(shouldAddChild, 1);
+                } else {
+                  expandClone.push(child.key);
+                }
+              }
             }
           });
+          setExpandedKeys(expandClone);
           // Change the parent element to true
           checkedClone[IndexToCheck] = {
             ...elementToCheck,
@@ -189,7 +210,7 @@ const App = () => {
     [checkAllChildren, checkAllSiblings, checkedKeys]
   );
 
-  const expandHandler = (key: string) => {
+  const expandHandler = (key: string[]) => {
     // const item = data.find((item) => item.key === key);
     // const expandClone: any[] = [...expandedKeys];
     // const shouldAdd = expandClone.findIndex((element) => element === key);
@@ -214,14 +235,8 @@ const App = () => {
     //     })
     //   );
     // }
-    const expandClone = [...expandedKeys];
-    const shouldAdd = expandClone.findIndex((element) => element === key);
-    if (shouldAdd > -1) {
-      expandClone.splice(shouldAdd, 1);
-    } else {
-      expandClone.push(key);
-    }
-    setExpandedKeys(expandClone);
+    console.log(expandedKeys, "expandedKeys");
+    setExpandedKeys(key);
   };
 
   return (

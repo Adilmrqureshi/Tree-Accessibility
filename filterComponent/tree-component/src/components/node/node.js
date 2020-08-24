@@ -20,6 +20,7 @@ function Node({ data, indent }) {
   );
 
   const onExpand = (key) => {
+    console.log(key);
     context.onExpand(key);
   };
 
@@ -36,8 +37,14 @@ function Node({ data, indent }) {
 
       if (item.children) {
         return (
-          <Collapse key={item.key} bordered={false} onChange={onExpand}>
+          <Collapse
+            activeKey={context.expandedKeys}
+            key={item.key}
+            bordered={false}
+            onChange={onExpand}
+          >
             <Collapse.Panel
+              forceRender={true}
               style={customPanelStyle}
               key={item.key}
               header={

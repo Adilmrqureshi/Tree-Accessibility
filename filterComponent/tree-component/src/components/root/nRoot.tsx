@@ -24,9 +24,9 @@ const Root: React.FC<Props> = ({ data }) => {
     [context]
   );
 
-  const onExpand = (key: string | string[]) => {
-    if (context.onExpand && Array.isArray(key))
-      context.onExpand(key[key.length - 1]);
+  const onExpand = (key: string[]) => {
+    console.log(key, "Before execution");
+    context.onExpand(key);
   };
 
   const customPanelStyle = {
@@ -37,7 +37,7 @@ const Root: React.FC<Props> = ({ data }) => {
   return (
     <div>
       <Collapse
-        defaultActiveKey={context.expandedKeys}
+        activeKey={context.expandedKeys}
         bordered={false}
         onChange={onExpand}
       >
@@ -54,6 +54,7 @@ const Root: React.FC<Props> = ({ data }) => {
           if (dataItem.children) {
             render = (
               <Collapse.Panel
+                forceRender={true}
                 style={customPanelStyle}
                 header={
                   <Checkbox
