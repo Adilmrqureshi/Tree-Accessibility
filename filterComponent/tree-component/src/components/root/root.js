@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import Node from "../node";
+import Node from "../node/node";
+
 const Root = (props) => {
   const [checked, setChecked] = useState([]);
   const { data } = props;
@@ -100,7 +101,7 @@ const Root = (props) => {
           // TailwindCSS used to implement flex and arrange nodes vertically
           <div
             key={dataItem.key}
-            className="flex flex-col justify-start items-start bg-gray-200"
+            className="flex flex-col justify-start items-start bg-gray-200 tree"
           >
             <Node
               onChange={(event) => onChangeHandler(event, dataItem.key, data)}
