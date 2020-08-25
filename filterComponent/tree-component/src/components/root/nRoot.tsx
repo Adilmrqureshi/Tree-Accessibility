@@ -49,7 +49,6 @@ const Root: React.FC<Props> = ({ data }) => {
             );
             if (shouldCheck !== undefined) shouldCheck = shouldCheck.checked;
           }
-
           if (dataItem.children) {
             render = (
               <Collapse.Panel
@@ -73,6 +72,7 @@ const Root: React.FC<Props> = ({ data }) => {
             render = (
               <div style={{ width: "100%", padding: "12px 16px 12px 40px" }}>
                 <Checkbox
+                  key={dataItem.key}
                   style={{ paddingLeft: 2 }}
                   onChange={(event) => onCheck(event, dataItem.key)}
                   checked={shouldCheck}
